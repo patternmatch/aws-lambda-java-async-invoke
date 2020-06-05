@@ -7,7 +7,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
 /**
- * The module containing all dependencies required by the {@link App}.
+ * The module containing all dependencies required by the {@link FirstFunction}.
  */
 public class DependencyFactory {
 
