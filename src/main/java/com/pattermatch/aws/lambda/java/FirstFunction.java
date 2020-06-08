@@ -2,7 +2,11 @@ package com.pattermatch.aws.lambda.java;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.InvocationType;
+import software.amazon.awssdk.services.lambda.model.InvokeRequest;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 /**
  * Lambda function entry point. You can change to use other pojo type or implement a different
@@ -13,6 +17,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
  */
 public class FirstFunction implements RequestHandler<Object, Object> {
 
+  private static final String SECOND_FUNCTION_NAME = "SecondFunction";
   private final LambdaClient lambdaClient;
 
   public FirstFunction() {
@@ -24,7 +29,15 @@ public class FirstFunction implements RequestHandler<Object, Object> {
 
   @Override
   public Object handleRequest(final Object input, final Context context) {
-    // TODO: invoking the api call using lambdaClient.
+    SdkBytes payload = SdkBytes.fromUtf8String("{\"input\": \"test\"}");
+    InvokeRequest invokeRequest = InvokeRequest.builder()
+        .functionName(SECOND_FUNCTION_NAME)
+        .invocationType(InvocationType.EVENT)
+        .payload(payload)
+        .build();
+    InvokeResponse invokeResponse = lambdaClient.invoke(invokeRequest);
+    System.out.println("Response: " + invokeResponse.toString());
+    System.out.println("Response Payload: " + invokeResponse.payload().asUtf8String());
     return input;
   }
 }
